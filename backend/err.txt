@@ -1,0 +1,97 @@
+﻿[dotenv@17.3.1] injecting env (5) from ..\.env -- tip: ΓÜí∩╕Å secrets for agents: https://dotenvx.com/as2
+node : node:internal/module
+s/cjs/loader:1459
+At line:1 char:1
++ node server.js 2>&1 | 
+Out-File -FilePath err.txt 
+-Encoding utf8
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (nod  
+  e:internal/modules/cjs   
+ /loader:1459:String) [    
+], RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+  throw err;
+  ^
+
+Error: Cannot find module 
+'openai'
+Require stack:
+- C:\Users\Jithin Sathaeesa
+n\Downloads\empath-ai\backe
+nd\services\aiService.js
+- C:\Users\Jithin Sathaeesa
+n\Downloads\empath-ai\backe
+nd\services\emotionService.
+js
+- C:\Users\Jithin Sathaeesa
+n\Downloads\empath-ai\backe
+nd\controllers\emotionContr
+oller.js
+- C:\Users\Jithin Sathaeesa
+n\Downloads\empath-ai\backe
+nd\routes\emotionRoutes.js
+- C:\Users\Jithin Sathaeesa
+n\Downloads\empath-ai\backe
+nd\server.js
+    at 
+Module._resolveFilename (no
+de:internal/modules/cjs/loa
+der:1456:15)
+    at defaultResolveImpl (
+node:internal/modules/cjs/l
+oader:1066:19)
+    at 
+resolveForCJSWithHooks (nod
+e:internal/modules/cjs/load
+er:1071:22)
+    at Module._load (node:i
+nternal/modules/cjs/loader:
+1242:25)
+    at wrapModuleLoad (node
+:internal/modules/cjs/loade
+r:255:19)
+    at Module.require (node
+:internal/modules/cjs/loade
+r:1556:12)
+    at require (node:intern
+al/modules/helpers:152:16)
+    at Object.<anonymous> 
+(C:\Users\Jithin Sathaeesan
+\Downloads\empath-ai\backen
+d\services\aiService.js:1:1
+6)
+    at Module._compile (nod
+e:internal/modules/cjs/load
+er:1812:14)
+    at Object..js (node:int
+ernal/modules/cjs/loader:19
+43:10) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\Jithin Sath
+aeesan\\Downloads\\empath-a
+i\\backend\\services\\aiSer
+vice.js',
+    'C:\\Users\\Jithin Sath
+aeesan\\Downloads\\empath-a
+i\\backend\\services\\emoti
+onService.js',
+    'C:\\Users\\Jithin Sath
+aeesan\\Downloads\\empath-a
+i\\backend\\controllers\\em
+otionController.js',
+    'C:\\Users\\Jithin Sath
+aeesan\\Downloads\\empath-a
+i\\backend\\routes\\emotion
+Routes.js',
+    'C:\\Users\\Jithin Sath
+aeesan\\Downloads\\empath-a
+i\\backend\\server.js'
+  ]
+}
+
+Node.js v24.14.0

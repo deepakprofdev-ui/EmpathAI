@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmpathAI — Your AI Companion for Mental Wellness</title>
+    <meta name="description" content="EmpathAI is an AI-powered mental health companion that listens, understands, and supports you 24/7.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.2.0",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+          "react-chartjs-2": "https://esm.sh/react-chartjs-2@5.2.0?external=react,react-dom,chart.js",
+          "chart.js": "https://esm.sh/chart.js@4.4.0",
+          "firebase/database": "https://esm.sh/firebase@10.8.0/database"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- ===================== TOAST ===================== -->
+<div aria-live="polite" aria-atomic="true">
+    <div id="toast-container" class="toast-container hidden">
+        <div class="toast" id="toast-el">
+            <i class="ph ph-info toast-icon" id="toast-icon"></i>
+            <span id="toast-message">Message</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== LANDING PAGE ===================== -->
+<div id="landing-page">
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="ph ph-sparkle"></i>
+                <span>EmpathAI</span>
+            </a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How it works</a></li>
+                <li><a href="#testimonials">Stories</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-ghost" id="btn-nav-login">Sign in</button>
+                <button class="btn-primary-sm" id="btn-nav-signup">Get Started Free</button>
+                <button class="btn-hamburger" id="btn-hamburger" aria-label="Menu">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-orb orb-1"></div>
+            <div class="hero-orb orb-2"></div>
+            <div class="hero-orb orb-3"></div>
+            <div class="hero-grid"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-left">
+                <div class="hero-badge">
+                    <i class="ph ph-shield-check"></i>
+                    <span>Safe · Private · Anonymous</span>
+                </div>
+                <h1 class="hero-title">
+                    Your AI Companion<br>
+                    for <span class="gradient-text">Mental Wellness</span>
+                </h1>
+                <p class="hero-sub">Talk freely, feel supported. EmpathAI listens with empathy, detects your emotions, and connects you with the right resources — all in a safe, private space.</p>
+                <div class="hero-actions">
+                    <button class="btn-hero-primary" id="btn-start-talking">
+                        <i class="ph ph-chat-circle-dots"></i> Start Talking Free
+                    </button>
+                    <button class="btn-hero-ghost" id="btn-learn-more">
+                        <i class="ph ph-play-circle"></i> How it works
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat"><strong>10K+</strong><span>Users helped</span></div>
+                    <div class="stat-div"></div>
+                    <div class="stat"><strong>98%</strong><span>Feel supported</span></div>
+                    <div class="stat-div"></div>
+                    <div class="stat"><strong>24/7</strong><span>Always available</span></div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="hero-orb-card">
+                    <div class="orb-card-inner">
+                        <div class="brain-orb">
+                            <div class="brain-ring ring-1"></div>
+                            <div class="brain-ring ring-2"></div>
+                            <div class="brain-ring ring-3"></div>
+                            <div class="brain-core">
+                                <i class="ph ph-brain" style="font-size:3rem;color:#00D4FF;"></i>
+                            </div>
+                        </div>
+                        <div class="floating-chip chip-1"><i class="ph ph-heart"></i> Feeling supported</div>
+                        <div class="floating-chip chip-2"><i class="ph ph-shield-check"></i> 100% Private</div>
+                        <div class="floating-chip chip-3"><span class="emotion-dot"></span> Calm detected</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section" id="features">
+        <div class="section-container">
+            <div class="section-label">WHAT WE OFFER</div>
+            <h2 class="section-title">Everything you need to <span class="gradient-text">feel better</span></h2>
+            <p class="section-sub">A complete mental wellness platform powered by empathetic AI</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#00D4FF"><i class="ph ph-brain"></i></div>
+                    <h3>AI Emotion Detection</h3>
+                    <p>Real-time analysis of your words to understand how you're truly feeling — happy, sad, anxious, stressed, or angry.</p>
+                    <div class="feature-badge">Powered by NLP</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#7C3AED"><i class="ph ph-chat-circle-dots"></i></div>
+                    <h3>Empathetic AI Chat</h3>
+                    <p>Conversational AI trained to respond with compassion, provide coping strategies, and never judge.</p>
+                    <div class="feature-badge">GPT-powered</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#10B981"><i class="ph ph-calendar-heart"></i></div>
+                    <h3>Mood Tracking</h3>
+                    <p>Log your daily emotional state using emoji-based input. Visualize patterns over time with beautiful charts.</p>
+                    <div class="feature-badge">Daily insights</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#F59E0B"><i class="ph ph-warning"></i></div>
+                    <h3>Crisis Detection</h3>
+                    <p>Advanced keyword detection instantly flags high-risk states and connects users to professional support resources.</p>
+                    <div class="feature-badge">Real-time alerts</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#EF4444"><i class="ph ph-microphone"></i></div>
+                    <h3>Voice Interaction</h3>
+                    <p>Speak your mind using the built-in voice input. No typing required — your voice is heard and understood.</p>
+                    <div class="feature-badge">Web Speech API</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--ic:#06B6D4"><i class="ph ph-shield-warning"></i></div>
+                    <h3>Counselor Monitoring</h3>
+                    <p>Licensed counselors get a dedicated dashboard to monitor at-risk users, review chat history, and intervene when needed.</p>
+                    <div class="feature-badge">Admin portal</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-section" id="how-it-works">
+        <div class="section-container">
+            <div class="section-label">SIMPLE PROCESS</div>
+            <h2 class="section-title">Start feeling better in <span class="gradient-text">3 steps</span></h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <i class="ph ph-user-circle step-icon"></i>
+                    <h3>Create Account</h3>
+                    <p>Sign up anonymously or with email. No personal data required to start.</p>
+                </div>
+                <div class="step-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <i class="ph ph-chat-circle step-icon"></i>
+                    <h3>Start Talking</h3>
+                    <p>Open the AI chat and express what's on your mind. Voice or text — your choice.</p>
+                </div>
+                <div class="step-arrow"><i class="ph ph-arrow-right"></i></div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <i class="ph ph-chart-line-up step-icon"></i>
+                    <h3>Track & Improve</h3>
+                    <p>Log your moods, review AI insights, and watch your emotional health improve.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-container">
+            <div class="section-label">REAL STORIES</div>
+            <h2 class="section-title">People who found <span class="gradient-text">support</span></h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"EmpathAI helped me through my worst anxiety episodes. Just knowing it would listen at 3am made all the difference."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#00D4FF,#7C3AED)">S</div>
+                        <div><strong>Sarah M.</strong><span>Anxiety management</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card featured">
+                    <div class="stars">★★★★★</div>
+                    <p>"The mood tracking feature helped me realize I was stressed every Monday evening. That insight alone changed how I approach my week."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#7C3AED,#EF4444)">J</div>
+                        <div><strong>James R.</strong><span>Stress tracking</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"As a counselor, this helps me monitor my patients between sessions. The crisis alert system has been a genuine lifesaver."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#10B981,#00D4FF)">D</div>
+                        <div><strong>Dr. Priya K.</strong><span>Licensed Counselor</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="section-container text-center">
+            <div class="cta-card">
+                <h2>Ready to start your <span class="gradient-text">wellness journey?</span></h2>
+                <p>Join thousands who talk to EmpathAI every day. Free, private, always available.</p>
+                <button class="btn-hero-primary" id="btn-cta-start">
+                    <i class="ph ph-sparkle"></i> Start for Free — No Signup Required
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <i class="ph ph-sparkle"></i> EmpathAI
+                <p>Your AI-powered companion for mental wellness. Private, empathetic, always available.</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How it works</a>
+                    <a href="#testimonials">Stories</a>
+                </div>
+                <div>
+                    <h4>Support</h4>
+                    <a href="#">Crisis Helpline</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 EmpathAI. Built with ❤️ for mental wellness. Your conversations are private and secure.</p>
+        </div>
+    </footer>
+
+</div><!-- /landing-page -->
+
+<!-- ===================== AUTH MODAL ===================== -->
+<div id="auth-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="auth-card">
+        <button class="auth-close" id="btn-auth-close" aria-label="Close"><i class="ph ph-x"></i></button>
+        <div class="auth-header">
+            <i class="ph ph-sparkle gradient-icon-sm"></i>
+            <h2 id="auth-title">Welcome to EmpathAI</h2>
+            <p>A safe space to talk freely and feel better.</p>
+        </div>
+
+        <div id="btn-google-login" class="w-100 mb-2" style="display: flex; justify-content: center; min-height: 44px;"></div>
+
+        <div class="auth-divider">or continue with email</div>
+
+
+
+        <div id="auth-error" class="auth-error hidden"></div>
+
+        <form id="auth-form">
+            <div class="field-group" id="name-group" style="display:none">
+                <label for="f-name"><i class="ph ph-user"></i> Full Name</label>
+                <input type="text" id="f-name" placeholder="Your name">
+            </div>
+            <div class="field-group" id="voice-sample-group" style="display:none">
+                <label><i class="ph ph-microphone"></i> Baseline Voice Sample</label>
+                <p class="text-sm text-gray-500 mb-2" style="font-size: 0.85rem; margin-top: -4px;">Optional: Help our AI better construct an acoustic profile of your natural vocal range.</p>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn-ghost" id="btn-record-sample" style="padding: 6px 12px; font-size: 0.85rem;">
+                        <i class="ph ph-microphone"></i> Record 5s
+                    </button>
+                    <span id="voice-status-text" style="font-size: 0.85rem; color: #666; font-weight: 500;">No sample</span>
+                </div>
+            </div>
+            <div class="field-group">
+                <label for="f-email"><i class="ph ph-envelope"></i> Email address</label>
+                <div class="input-icon-wrap" id="email-field">
+                    <input type="email" id="f-email" placeholder="name@example.com" autocomplete="email" aria-describedby="email-hint">
+                    <i class="ph ph-check-circle vi vi-valid" aria-hidden="true"></i>
+                    <i class="ph ph-warning-circle vi vi-error" aria-hidden="true"></i>
+                </div>
+                <span class="field-hint" id="email-hint"></span>
+            </div>
+            <div class="field-group">
+                <label for="f-password"><i class="ph ph-lock"></i> Password</label>
+                <div class="input-icon-wrap" id="password-field">
+                    <input type="password" id="f-password" placeholder="At least 6 characters" minlength="6" autocomplete="current-password" aria-describedby="pwd-hint">
+                    <button type="button" id="btn-toggle-pwd" class="btn-eye" aria-label="Show/hide password">
+                        <i class="ph ph-eye" id="eye-icon"></i>
+                    </button>
+                </div>
+                <span class="field-hint" id="pwd-hint"></span>
+            </div>
+            <div class="pref-panel">
+                <div class="pref-row">
+                    <label><i class="ph ph-translate"></i> Language</label>
+                    <select id="pref-lang" class="minimal-select">
+                        <option value="English">English</option>
+                        <option value="Tamil">Tamil</option>
+                        <option value="Hindi">Hindi</option>
+                    </select>
+                </div>
+                <div class="pref-row">
+                    <label><i class="ph ph-speaker-high"></i> Voice assistant</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pref-voice" checked>
+                        <span class="toggle-thumb"></span>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn-auth-submit" id="btn-auth-submit">
+                <span class="btn-label">Sign in securely</span>
+            </button>
+        </form>
+
+        <div class="auth-toggle-row">
+            <a href="#" id="btn-toggle-auth" class="text-link">Need an account? Sign up</a>
+        </div>
+
+        <div class="anon-box">
+            <div class="anon-header">
+                <i class="ph ph-shield-check"></i>
+                <div>
+                    <strong>Private &amp; Confidential</strong>
+                    <small>Your identity and conversations are encrypted</small>
+                </div>
+            </div>
+            <button class="btn-anon w-100" id="btn-anonymous">
+                <i class="ph ph-mask-happy"></i> Enter Anonymously
+            </button>
+        </div>
+
+        <button class="btn-counselor-link" id="btn-counselor-login">Counselor / Admin Login</button>
+    </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="app-layout" class="hidden">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-logo">
+            <i class="ph ph-sparkle"></i>
+            <span class="logo-text">EmpathAI</span>
+        </div>
+
+        <button class="btn-dark-mode" id="btn-dark-mode" aria-label="Toggle dark mode">
+            <i class="ph ph-moon dark-icon"></i>
+            <i class="ph ph-sun light-icon"></i>
+            <span class="dm-label">Dark Mode</span>
+        </button>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-view="chat-view" data-label="Talk Freely">
+                <i class="ph ph-chat-circle-dots"></i><span>Talk Freely</span>
+            </a>
+            <a href="#" class="nav-item" data-view="mood-view" data-label="Mood Tracker">
+                <i class="ph ph-calendar-heart"></i><span>Mood Tracker</span>
+            </a>
+            <a href="#" class="nav-item" data-view="dashboard-view" data-label="Dashboard">
+                <i class="ph ph-chart-line-up"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item counselor-only hidden" data-view="counselor-view" data-label="Counselor Portal">
+                <i class="ph ph-shield-warning"></i><span>Counselor Portal</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-help-big" id="btn-help-emergency" aria-label="Emergency help">
+                <i class="ph ph-phone-call"></i> <span>HELP</span>
+            </button>
+            <div class="user-profile-row">
+                <div class="user-ava"><i class="ph ph-user"></i></div>
+                <div class="user-info">
+                    <span class="user-name" id="nav-user-name">User</span>
+                    <span class="user-role" id="nav-user-role">Member</span>
+                </div>
+                <button class="btn-logout" id="btn-logout" aria-label="Logout" title="Logout">
+                    <i class="ph ph-sign-out"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Content area -->
+    <main class="app-content" id="app-content">
+
+        <!-- Mobile header -->
+        <header class="mobile-header hide-desktop">
+            <button class="btn-icon" id="btn-menu" aria-label="Open menu"><i class="ph ph-list"></i></button>
+            <span class="mobile-logo"><i class="ph ph-sparkle"></i> EmpathAI</span>
+            <div class="user-ava sm"><i class="ph ph-user"></i></div>
+        </header>
+
+        <!-- ===== CHAT VIEW ===== -->
+        <section id="chat-view" class="app-view active">
+            <div class="view-header">
+                <div>
+                    <h2>Talk Freely <span class="badge-live">AI Ready</span></h2>
+                    <p>Speak or type. I'm here to listen without judgment.</p>
+                </div>
+                <div class="view-header-actions">
+                    <button class="btn-detect-emotion-header" id="btn-detect-emotion" aria-label="Detect emotion">
+                        <i class="ph ph-brain"></i> Detect Emotion
+                    </button>
+                    <button class="btn-voice-out" id="btn-toggle-voice" aria-label="Toggle voice output" aria-pressed="false" title="Voice output">
+                        <i class="ph ph-speaker-high"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-shell">
+                <!-- Empty state / welcome -->
+                <div class="chat-empty" id="chat-empty">
+                    <div class="chat-empty-orb"><i class="ph ph-robot"></i></div>
+                    <h3>Hello <span id="welcome-name">there</span> 👋</h3>
+                    <p>I'm EmpathAI. I'm here to listen and support you — no judgment, completely private.</p>
+                    <div class="quick-chips">
+                        <button class="quick-chip" onclick="sendQuick(this)">😰 I've been feeling really anxious</button>
+                        <button class="quick-chip" onclick="sendQuick(this)">😢 I need someone to talk to</button>
+                        <button class="quick-chip" onclick="sendQuick(this)">🌟 Help me with stress management</button>
+                        <button class="quick-chip" onclick="sendQuick(this)">😴 I haven't been sleeping well</button>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="chat-messages" id="chat-messages"></div>
+
+                <!-- Therapy suggestions -->
+                <div class="suggestions-strip hidden" id="chat-suggestions"></div>
+
+                <!-- Emotion Indicator (shown while typing / after detection) -->
+                <div class="emotion-indicator hidden" id="emotion-indicator" role="status" aria-live="polite">
+                    <span id="emotion-emoji"></span>
+                    <span id="emotion-label">Detecting…</span>
+                    <button class="btn-emotion-dismiss" id="btn-dismiss-emotion" aria-label="Dismiss">×</button>
+                </div>
+
+                <!-- Input bar -->
+                <div class="chat-input-bar">
+                    <form class="chat-form" id="chat-form">
+                        <button type="button" class="btn-mic" id="btn-mic" aria-label="Voice input" aria-pressed="false">
+                            <i class="ph ph-microphone"></i>
+                        </button>
+                        <input type="text" id="chat-input" placeholder="Type a message or use the mic..." autocomplete="off" aria-label="Chat message">
+                        <button type="submit" class="btn-send" aria-label="Send message">
+                            <i class="ph ph-paper-plane-tilt"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MOOD VIEW ===== -->
+        <section id="mood-view" class="app-view hidden">
+            <div class="view-header">
+                <div>
+                    <h2>Mood Tracker</h2>
+                    <p>Log your feelings to discover patterns and trends.</p>
+                </div>
+            </div>
+
+            <div class="mood-log-card glass-card">
+                <h3>How are you feeling right now?</h3>
+                <div class="mood-selector" id="mood-selector">
+                    <button class="mood-btn" data-mood="happy" aria-label="Happy">😊<span>Happy</span></button>
+                    <button class="mood-btn" data-mood="neutral" aria-label="Neutral">😐<span>Neutral</span></button>
+                    <button class="mood-btn" data-mood="sad" aria-label="Sad">😢<span>Sad</span></button>
+                    <button class="mood-btn" data-mood="angry" aria-label="Angry">😡<span>Angry</span></button>
+                    <button class="mood-btn" data-mood="anxious" aria-label="Anxious">😟<span>Anxious</span></button>
+                    <button class="mood-btn" data-mood="stressed" aria-label="Stressed">😰<span>Stressed</span></button>
+                </div>
+                <div class="field-group mt-2">
+                    <label for="mood-note"><i class="ph ph-note-pencil"></i> Personal note <small>(optional)</small></label>
+                    <textarea id="mood-note" rows="3" placeholder="What's on your mind? What made you feel this way?"></textarea>
+                </div>
+                <button class="btn-primary-full" id="btn-save-mood">
+                    <i class="ph ph-check-circle"></i> Save Mood Entry
+                </button>
+            </div>
+
+            <div class="glass-card mt-2">
+                <div class="section-row">
+                    <h3><i class="ph ph-clock-clockwise"></i> Recent Entries</h3>
+                    <span class="entry-count" id="entry-count">0 entries</span>
+                </div>
+                <ul class="mood-history" id="mood-history-list">
+                    <li class="mood-empty-state">
+                        <i class="ph ph-smiley"></i>
+                        <p>No entries yet. Log your first mood above!</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <section id="dashboard-view" class="app-view hidden">
+            <div class="view-header">
+                <div>
+                    <h2>Your Dashboard</h2>
+                    <p>Analytics based on your mood logs and chat history.</p>
+                </div>
+            </div>
+
+            <!-- Skeleton: shown while loading -->
+            <div id="dashboard-skeleton" class="dash-grid" aria-hidden="true">
+                <div class="skeleton-stat-card"><div class="skeleton sk-icon"></div><div class="sk-body"><div class="skeleton sk-wide"></div><div class="skeleton sk-big"></div></div></div>
+                <div class="skeleton-stat-card"><div class="skeleton sk-icon"></div><div class="sk-body"><div class="skeleton sk-wide"></div><div class="skeleton sk-big"></div></div></div>
+                <div class="skeleton-stat-card"><div class="skeleton sk-icon"></div><div class="sk-body"><div class="skeleton sk-wide"></div><div class="skeleton sk-big"></div></div></div>
+            </div>
+
+            <!-- Real stat cards -->
+            <div class="dash-grid hidden" id="dashboard-stats">
+                <div class="stat-card glass-card">
+                    <div class="stat-ico" style="--sc:#00D4FF"><i class="ph ph-chats"></i></div>
+                    <div class="stat-body"><small>Total Conversations</small><h2 id="stat-conversations">0</h2></div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-ico" style="--sc:#7C3AED"><i class="ph ph-heartbeat"></i></div>
+                    <div class="stat-body"><small>Dominant Mood</small><h2 id="stat-dominant-mood">—</h2></div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-ico" style="--sc:#10B981"><i class="ph ph-calendar-check"></i></div>
+                    <div class="stat-body"><small>Mood Entries</small><h2 id="stat-mood-entries">0</h2></div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div id="chart-skeleton" class="charts-row" aria-hidden="true">
+                <div class="skeleton-chart-card glass-card"><div class="skeleton sk-wide mb-1"></div><div class="skeleton-bars"><div class="skeleton sk-bar" style="height:60%"></div><div class="skeleton sk-bar" style="height:85%"></div><div class="skeleton sk-bar" style="height:45%"></div><div class="skeleton sk-bar" style="height:70%"></div><div class="skeleton sk-bar" style="height:30%"></div><div class="skeleton sk-bar" style="height:90%"></div></div></div>
+            </div>
+            <div class="charts-row hidden" id="dashboard-charts">
+                <div class="glass-card chart-card">
+                    <h3><i class="ph ph-chart-bar"></i> Emotion Distribution</h3>
+                    <div class="chart-wrap">
+                        <canvas id="emotionChart"></canvas>
+                        <div class="chart-empty-state hidden" id="chart-empty">
+                            <i class="ph ph-chart-bar"></i>
+                            <p>No mood data yet.<br>Start logging to see your patterns.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card chart-card">
+                    <h3><i class="ph ph-trend-up"></i> Mood Trend</h3>
+                    <div class="chart-wrap">
+                        <canvas id="moodTrendChart"></canvas>
+                        <div class="chart-empty-state hidden" id="trend-empty">
+                            <i class="ph ph-trend-up"></i>
+                            <p>Log moods for 3+ days<br>to see your trend.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== COUNSELOR VIEW ===== -->
+        <section id="counselor-view" class="app-view hidden">
+            <div class="view-header">
+                <div>
+                    <h2>Counselor Dashboard</h2>
+                    <p>Monitor high-risk users and manage crisis alerts.</p>
+                </div>
+                <div class="risk-live-badge">
+                    <span class="pulse-dot"></span> Live monitoring
+                </div>
+            </div>
+
+            <div class="glass-card crisis-card mb-2">
+                <div class="card-header-row">
+                    <h3><i class="ph ph-warning-circle text-danger"></i> Recent Crisis Alerts</h3>
+                    <span class="badge-count" id="alert-count">0 alerts</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" aria-label="Crisis alerts">
+                        <thead><tr><th>Time</th><th>User ID</th><th>Trigger Message</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="crisis-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="card-header-row">
+                    <h3><i class="ph ph-users"></i> Registered Users</h3>
+                    <span class="badge-count" id="user-count">0 users</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" aria-label="Users list">
+                        <thead><tr><th>User ID</th><th>Name</th><th>Email</th><th>Login Method</th><th>Risk</th></tr></thead>
+                        <tbody id="users-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div><!-- /app-layout -->
+
+<!-- ===== EMOTION RESULT MODAL ===== -->
+<div id="emotion-result-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="emotion-modal-title">
+    <div class="modal-card emotion-result-card">
+        <button class="auth-close" id="btn-close-emotion-modal" aria-label="Close"><i class="ph ph-x"></i></button>
+        <div class="emotion-result-orb" id="emotion-result-orb"></div>
+        <div class="emotion-result-emoji" id="emotion-result-emoji">😐</div>
+        <h2 id="emotion-modal-title" class="emotion-result-name" id="emotion-result-name">Neutral</h2>
+        <p class="emotion-result-desc" id="emotion-result-desc">Your message appears calm and balanced.</p>
+        <div class="emotion-tips" id="emotion-tips"></div>
+        <button class="btn-ghost-full" id="btn-close-emotion-modal-2">Close</button>
+    </div>
+</div>
+
+<!-- ===== CRISIS MODAL ===== -->
+<div id="crisis-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="crisis-title">
+    <div class="modal-card crisis-modal-card">
+        <div class="crisis-pulse-ring"></div>
+        <div class="modal-icon danger"><i class="ph ph-warning"></i></div>
+        <h2 id="crisis-title">You are not alone.</h2>
+        <p>It sounds like you're going through an incredibly difficult time. Support is available right now.</p>
+        <div class="modal-actions">
+            <button class="btn-danger-full" id="btn-contact-counselor">
+                <i class="ph ph-phone"></i> Contact Helpline (988)
+            </button>
+            <button class="btn-primary-full" id="btn-trusted-contact">
+                <i class="ph ph-users"></i> Alert Trusted Contact
+            </button>
+            <button class="btn-ghost-full" id="btn-close-crisis">
+                <i class="ph ph-chat-circle"></i> Continue Chatting
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HELP MODAL ===== -->
+<div id="help-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal-card">
+        <div class="modal-icon primary"><i class="ph ph-lifebuoy"></i></div>
+        <h2 id="help-title">Emergency Support</h2>
+        <p>You are not alone. Support is available when you need it.</p>
+        <div class="helpline-cards">
+            <a href="tel:988" class="helpline-card">
+                <i class="ph ph-phone-call"></i>
+                <div><strong>988 Suicide &amp; Crisis Lifeline</strong><small>Call or text 988 — Available 24/7</small></div>
+            </a>
+            <a href="sms:741741" class="helpline-card">
+                <i class="ph ph-chat-circle-dots"></i>
+                <div><strong>Crisis Text Line</strong><small>Text HOME to 741741</small></div>
+            </a>
+        </div>
+        <button class="btn-ghost-full mt-2" id="btn-close-help">Close</button>
+    </div>
+</div>
+
+<!-- ===== USER CHART MODAL (COUNSELOR) ===== -->
+<div id="user-chart-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chart-title">
+    <div class="modal-card" style="max-width: 600px; width: 100%; height: 80vh; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <div>
+                <h2 id="chart-title">User Chart</h2>
+                <p id="chart-subtitle" class="text-muted" style="margin:0;">Loading...</p>
+            </div>
+            <button class="auth-close" onclick="hideEl('user-chart-modal')" aria-label="Close"><i class="ph ph-x"></i></button>
+        </div>
+        
+        <div id="chart-messages-list" style="flex: 1; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
+            <!-- Rendered via JS -->
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+            <form id="chart-reply-form" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="chart-reply-input" style="flex:1; padding: 1rem; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text);" placeholder="Type a professional counselor reply...">
+                <button type="submit" class="btn-primary" style="border-radius: 12px; padding: 0 1.5rem;"><i class="ph ph-paper-plane-tilt"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="pages/login.js"></script>
+<script src="pages/chat.js"></script>
+<script src="pages/mood.js"></script>
+<script type="text/babel" data-type="module" src="pages/dashboard.js"></script>
+<script src="plugins/therapyEngine.js"></script>
+<script src="plugins/moodAnalytics.js"></script>
+<script src="plugins/chatFix.js"></script>
+</body>
+</html>

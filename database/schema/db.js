@@ -1,0 +1,20 @@
+// Shared in-memory store — single source of truth for server.js and api.js
+const db = {
+    users: [
+        {
+            user_id: 'ADMIN001',
+            name: 'Counselor Admin',
+            email: 'admin@empathai.clinic',
+            password_hash: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password = 'superuser123' (bcrypt)
+            login_type: 'counselor',
+            preferred_language: 'English',
+            voice_enabled: true,
+            created_at: Date.now()
+        }
+    ],
+    moodEntries: [],
+    chatHistory: [],
+    crisisAlerts: []
+};
+
+module.exports = db;
