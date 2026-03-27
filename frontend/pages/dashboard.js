@@ -101,7 +101,7 @@ export default function Dashboard() {
           return;
         }
 
-        const API = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
+        const API = 'https://empathai-backend-s9bc.onrender.com/api';
         const res = await fetch(`${API}/dashboard/${userId}`);
         const data = await res.json();
         

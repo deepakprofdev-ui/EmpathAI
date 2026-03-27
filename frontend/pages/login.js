@@ -9,7 +9,7 @@ import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(({ create
   try { supabase = createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) { supabase = null; }
 }).catch(e => console.error(e));
 
-const API = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
+const API = 'https://empathai-backend-s9bc.onrender.com/api';
 const CRISIS_WORDS = ['suicide', 'kill myself', 'die', 'end my life', 'hopeless', 'worthless', 'self harm', 'self-harm', 'want to die', 'no reason to live'];
 
 // ── Frontend emotion keyword map (mirrors backend NLP) ────────
