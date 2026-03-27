@@ -1,3 +1,13 @@
+function escHtml(str) {
+  if (!str) return '';
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function speak(text) {
+  if (!state.voiceOutput) return;
+  const utt = new SpeechSynthesisUtterance(text);
   utt.rate = 0.95; utt.pitch = 1; utt.volume = 0.8;
   window.speechSynthesis.speak(utt);
 }
@@ -119,3 +129,8 @@ async function fetchCounselor() {
     toast('Could not load counselor data', 'error');
   }
 }
+
+// --- GLOBAL EXPORTS ---
+window.saveMood = saveMood;
+window.fetchDashboard = fetchDashboard;
+window.fetchCounselor = fetchCounselor;

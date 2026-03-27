@@ -205,7 +205,7 @@ async function sendChatMessage(text, isGreeting = false) {
 // Global Polling mechanism for incoming backend messages (like Counselor replies)
 setInterval(async () => {
   // Only poll if on chat view, logged in, and not a counselor.
-  if (!state.user || state.user.login_type === 'counselor' || !document.getElementById('chat-view').classList.contains('active')) return;
+  if (!state.user?.user_id || state.user.login_type === 'counselor' || !document.getElementById('chat-view').classList.contains('active')) return;
   
   try {
     const res = await fetch(`${API}/chat/${state.user.user_id}/history`);
@@ -230,7 +230,13 @@ setInterval(async () => {
         }
     }
   } catch(e) { /* ignore polling errors */ }
-}, 3000);
+}, 10000);
+
+// --- GLOBAL EXPORTS ---
+window.launchApp = launchApp;
+window.setupApp = setupApp;
+window.switchView = switchView;
+window.sendChatMessage = sendChatMessage;
 
 function addMessage(text, role, emotion = null) {
   const container = document.getElementById('chat-messages');

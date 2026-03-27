@@ -17,12 +17,13 @@ const app = express();
 
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Rate Limiter configuration: 100 requests per minute per IP
+// Rate Limiter configuration: 1000 requests per minute per IP
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000, 
-  max: 100,
+  max: 1000,
   message: { error: 'Too many requests, please try again later.' }
 });
 app.use('/api', apiLimiter);
