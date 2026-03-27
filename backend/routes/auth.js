@@ -23,11 +23,15 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user.user_id, role: user.login_type }, JWT_SECRET, { expiresIn: '24h' });
+<<<<<<< HEAD
     
     // Update last login
     user.last_login = Date.now();
 
     res.json({ success: true, token, user: { user_id: user.user_id, email: user.email, name: user.name, login_type: user.login_type, has_voice_sample: !!(user.voice_sample), is_deaf: !!(user.is_deaf) }});
+=======
+    res.json({ success: true, token, user: { user_id: user.user_id, email: user.email, name: user.name, login_type: user.login_type }});
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 });
 
 router.post('/register', async (req, res) => {
@@ -45,9 +49,13 @@ router.post('/register', async (req, res) => {
         password_hash: hash,
         login_type: 'email',
         voice_sample: voice_sample || null,
+<<<<<<< HEAD
         created_at: Date.now(),
         last_login: Date.now(),
         is_deaf: req.body.is_deaf === true
+=======
+        created_at: Date.now()
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
     };
     db.users.push(newUser);
     const token = jwt.sign({ id: newUser.user_id, role: newUser.login_type }, JWT_SECRET, { expiresIn: '24h' });
@@ -102,6 +110,7 @@ router.post('/google', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 // ── VOICE ATTESTATION ──────────────────────────────────────────
 // POST /api/auth/verify-voice
 // Body: { user_id, voice_sample }  (Base64 audio/webm)
@@ -140,3 +149,6 @@ router.post('/verify-voice', (req, res) => {
 
 module.exports = router;
 
+=======
+module.exports = router;
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d

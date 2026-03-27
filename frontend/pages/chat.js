@@ -205,7 +205,11 @@ async function sendChatMessage(text, isGreeting = false) {
 // Global Polling mechanism for incoming backend messages (like Counselor replies)
 setInterval(async () => {
   // Only poll if on chat view, logged in, and not a counselor.
+<<<<<<< HEAD
   if (!state.user?.user_id || state.user.login_type === 'counselor' || !document.getElementById('chat-view').classList.contains('active')) return;
+=======
+  if (!state.user || state.user.login_type === 'counselor' || !document.getElementById('chat-view').classList.contains('active')) return;
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   
   try {
     const res = await fetch(`${API}/chat/${state.user.user_id}/history`);
@@ -230,11 +234,15 @@ setInterval(async () => {
         }
     }
   } catch(e) { /* ignore polling errors */ }
+<<<<<<< HEAD
 }, 10000);
 
 // ──────────────────────────────────────────────
 // UI HELPERS
 // ──────────────────────────────────────────────
+=======
+}, 3000);
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 
 function addMessage(text, role, emotion = null) {
   const container = document.getElementById('chat-messages');
@@ -291,6 +299,7 @@ async function markHighRisk(message) {
 
 function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+<<<<<<< HEAD
 function triggerHumanize() {
   const input = document.getElementById('chat-input');
   if (input) {
@@ -299,6 +308,8 @@ function triggerHumanize() {
   }
 }
 
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 // ──────────────────────────────────────────────
 // VOICE INPUT
 // ──────────────────────────────────────────────
@@ -329,6 +340,7 @@ function speak(text) {
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   window.speechSynthesis.speak(utterance);
+<<<<<<< HEAD
 }
 
 // ──────────────────────────────────────────────
@@ -340,3 +352,6 @@ window.switchView = switchView;
 window.sendChatMessage = sendChatMessage;
 window.addMessage = addMessage;
 window.triggerHumanize = triggerHumanize;
+=======
+}
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d

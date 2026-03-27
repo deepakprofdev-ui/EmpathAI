@@ -79,9 +79,15 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
+<<<<<<< HEAD
     const fetchDashboardData = async (overrideUserId) => {
       try {
         let userId = overrideUserId || localStorage.getItem('empathai_user_id');
+=======
+    const fetchDashboardData = async () => {
+      try {
+        let userId = localStorage.getItem('empathai_user_id');
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
         
         // Ensure graceful session recovery
         if (!userId) {
@@ -101,10 +107,14 @@ export default function Dashboard() {
           return;
         }
 
+<<<<<<< HEAD
         setLoading(true);
         setError(null);
 
         const API = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
+=======
+        const API = 'https://empathai-backend-s9bc.onrender.com/api';
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
         const res = await fetch(`${API}/dashboard/${userId}`);
         const data = await res.json();
         
@@ -170,7 +180,11 @@ export default function Dashboard() {
           const computed = computeAnalytics({
             moods:         finalMoods,
             emotions:      emotionsAsArray,
+<<<<<<< HEAD
             exercises:     [{ completed: true }, { completed: true }, {}, {}, {}],
+=======
+            exercises:     [{ completed: true }, { completed: true }, {}, {}, {}], // 2/5 done
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
             conversations: finalChats,
           });
           setAnalytics(computed);
@@ -184,6 +198,7 @@ export default function Dashboard() {
       }
     };
 
+<<<<<<< HEAD
     // Initial fetch on mount
     fetchDashboardData();
 
@@ -196,6 +211,11 @@ export default function Dashboard() {
   }, []);
 
 
+=======
+    fetchDashboardData();
+  }, []);
+
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   // --- Calculations ---
   // --- Calculations ---
   // Mood text to 9-scale numeric mapping for trend visualization

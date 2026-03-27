@@ -513,6 +513,7 @@ body:not(.dark) .toast-info{background:#EFF6FF;color:#1E3A5F;}
   .hero-badge{display:inline-flex;}
   .section-title{font-size:1.875rem;}
 }
+<<<<<<< HEAD
 
 /* ================================================================
    VOICE ATTESTATION MODAL  — added non-destructively
@@ -696,3 +697,5 @@ body:not(.dark) .toast-info{background:#EFF6FF;color:#1E3A5F;}
 .badge-pill.danger  { background: rgba(239,68,68,.15);  color: #F87171; }
 .badge-pill.success { background: rgba(16,185,129,.15); color: #34D399; }
 .badge-pill.warning { background: rgba(245,158,11,.15); color: #FBBF24; }
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function escHtml(str) {
   if (!str) return '';
   const d = document.createElement('div');
@@ -8,6 +9,8 @@ function escHtml(str) {
 function speak(text) {
   if (!state.voiceOutput) return;
   const utt = new SpeechSynthesisUtterance(text);
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   utt.rate = 0.95; utt.pitch = 1; utt.volume = 0.8;
   window.speechSynthesis.speak(utt);
 }
@@ -18,13 +21,20 @@ function speak(text) {
 async function saveMood() {
   if (!state.selectedMood) { toast('Please select a mood first', 'warning'); return; }
   const note = document.getElementById('mood-note').value.trim();
+<<<<<<< HEAD
   const uid = state.user?.user_id || state.user?.id;
   if (!uid) { toast('Please log in to save mood', 'warning'); return; }
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   try {
     const res = await fetch(`${API}/mood`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+<<<<<<< HEAD
       body: JSON.stringify({ userId: uid, mood: state.selectedMood, note })
+=======
+      body: JSON.stringify({ userId: state.user?.id || state.user?.user_id, mood: state.selectedMood, note })
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
     });
     const data = await res.json();
     if (data.success) {
@@ -33,15 +43,21 @@ async function saveMood() {
       document.getElementById('mood-note').value = '';
       document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
       state.selectedMood = null;
+<<<<<<< HEAD
     } else {
       toast(data.error || 'Could not save mood', 'error');
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
     }
   } catch(e) { toast('Could not save mood', 'error'); }
 }
 
 function appendMoodEntry(entry) {
   const list = document.getElementById('mood-history-list');
+<<<<<<< HEAD
   if (!list) return;
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   list.querySelector('.mood-empty-state')?.remove();
   const em = EMOTION_MAP[entry.mood] || EMOTION_MAP.neutral;
   const li = document.createElement('li');
@@ -59,6 +75,7 @@ function appendMoodEntry(entry) {
 }
 
 // ──────────────────────────────────────────────
+<<<<<<< HEAD
 // DASHBOARD — event bridge to React component
 // ──────────────────────────────────────────────
 async function fetchDashboard() {
@@ -174,3 +191,18 @@ window.saveMood = saveMood;
 window.fetchDashboard = fetchDashboard;
 window.fetchCounselor = fetchCounselor;
 window.showUserHistory = showUserHistory;
+=======
+// DASHBOARD
+// ──────────────────────────────────────────────
+async function fetchDashboard() {
+  showEl('dashboard-skeleton'); showEl('chart-skeleton');
+  hideEl('dashboard-stats');    hideEl('dashboard-charts');
+  try {
+    const res = await fetch(`${API}/dashboard/${state.user?.user_id}`);
+    const data = await res.json();
+    // Stats
+    document.getElementById('stat-conversations').textContent = data.totalConversations ?? 0;
+    const histories = data.moodHistory || [];
+    document.getElementById('stat-mood-entries').textContent = histories.length;
+    let dominant = 'None'; let max = 0;
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d

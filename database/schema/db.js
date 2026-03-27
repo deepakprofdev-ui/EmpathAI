@@ -9,8 +9,11 @@ const db = {
             login_type: 'counselor',
             preferred_language: 'English',
             voice_enabled: true,
+<<<<<<< HEAD
             is_deaf: false,
             last_login: Date.now(),
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
             created_at: Date.now()
         }
     ],

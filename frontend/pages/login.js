@@ -9,7 +9,11 @@ import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(({ create
   try { supabase = createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) { supabase = null; }
 }).catch(e => console.error(e));
 
+<<<<<<< HEAD
 const API = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
+=======
+const API = 'https://empathai-backend-s9bc.onrender.com/api';
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 const CRISIS_WORDS = ['suicide', 'kill myself', 'die', 'end my life', 'hopeless', 'worthless', 'self harm', 'self-harm', 'want to die', 'no reason to live'];
 
 // ── Frontend emotion keyword map (mirrors backend NLP) ────────
@@ -113,8 +117,11 @@ function showAuth(mode = 'login') {
   document.getElementById('name-group').style.display = mode === 'register' ? '' : 'none';
   const voiceGroup = document.getElementById('voice-sample-group');
   if (voiceGroup) voiceGroup.style.display = mode === 'register' ? '' : 'none';
+<<<<<<< HEAD
   const deafGroup = document.getElementById('deaf-group');
   if (deafGroup) deafGroup.style.display = mode === 'register' ? '' : 'none';
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   document.getElementById('btn-toggle-auth').textContent = mode === 'register' ? 'Already have an account? Sign in' : 'Need an account? Sign up';
 }
 function hideAuth() { document.getElementById('auth-modal').classList.add('hidden'); }
@@ -200,9 +207,14 @@ async function handleEmailAuth() {
   const ep = state.mode === 'register' ? '/auth/register' : '/auth/login';
   
   const payload = { email, password, name };
+<<<<<<< HEAD
   if (state.mode === 'register') {
     if (state.voiceSample) payload.voice_sample = state.voiceSample;
     payload.is_deaf = document.getElementById('f-is-deaf')?.checked || false;
+=======
+  if (state.mode === 'register' && state.voiceSample) {
+    payload.voice_sample = state.voiceSample;
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   }
   
   await doLogin(ep, payload);
@@ -222,6 +234,7 @@ async function doLogin(endpoint, payload) {
       localStorage.setItem('empathai_user_id', data.user.user_id);
     }
     hideAuth();
+<<<<<<< HEAD
 
     // ── VOICE ATTESTATION GATE ────────────────────────────────────
     // Only for email-registered users who have a stored voice baseline.
@@ -232,6 +245,9 @@ async function doLogin(endpoint, payload) {
     } else {
       launchApp();
     }
+=======
+    launchApp();
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
   } catch (err) {
     toast('Cannot connect to server', 'error');
   } finally { setAuthLoading(false); }
@@ -291,6 +307,7 @@ window.handleGoogleLogin = (e) => {
 
 
 // ──────────────────────────────────────────────
+<<<<<<< HEAD
 // VOICE ATTESTATION  (post-login identity check)
 // ──────────────────────────────────────────────
 let attestRecorder = null;
@@ -450,6 +467,8 @@ function _vaSetStatus(msg, cls) {
 }
 
 // ──────────────────────────────────────────────
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 // LAUNCH APP
 // MODALS SETUP
 // ──────────────────────────────────────────────
@@ -478,6 +497,7 @@ function toast(msg, type = 'info') {
 // ──────────────────────────────────────────────
 function showEl(id) { document.getElementById(id)?.classList.remove('hidden'); }
 function hideEl(id) { document.getElementById(id)?.classList.add('hidden'); }
+<<<<<<< HEAD
 
 function startLoginTimer(seconds) {
   const btn = document.getElementById('btn-auth-submit');
@@ -501,6 +521,8 @@ function startLoginTimer(seconds) {
     }
   }, 1000);
 }
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
 // --- GLOBAL EXPORTS ---
 window.showAuth = showAuth;
 window.hideModal = hideModal;

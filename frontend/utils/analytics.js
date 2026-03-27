@@ -204,5 +204,8 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
   window.EmpathAnalytics = { computeAnalytics };
 }
+<<<<<<< HEAD
 
 export { computeAnalytics };
+=======
+>>>>>>> 436f9e14925a661809128a8df0b61d709422674d
