@@ -322,6 +322,35 @@
                 </div>
                 <span class="field-hint" id="pwd-hint"></span>
             </div>
+
+            <!-- ── VOICE AUTHENTICATION ── -->
+            <div class="field-group voice-auth-group" id="voice-auth-group">
+                <label><i class="ph ph-waveform"></i> Voice Authentication</label>
+                <p class="field-helper-text">Verify your identity using your voice for secure daily login.</p>
+                <button type="button" class="btn-voice-auth" id="btn-voice-auth" aria-label="Start voice authentication">
+                    <span class="voice-auth-icon"><i class="ph ph-microphone" id="voice-auth-mic-icon"></i></span>
+                    <span class="voice-auth-waveform hidden" id="voice-auth-waveform" aria-hidden="true">
+                        <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
+                        <span class="wave-bar"></span><span class="wave-bar"></span>
+                    </span>
+                    <span class="voice-auth-label" id="voice-auth-label">Start Voice Authentication</span>
+                </button>
+                <p class="voice-auth-status" id="voice-auth-status" aria-live="polite"></p>
+            </div>
+
+            <!-- ── EMERGENCY CONTACT ── -->
+            <div class="field-group">
+                <label for="f-emergency"><i class="ph ph-phone"></i> Emergency Contact Number</label>
+                <div class="input-icon-wrap" id="emergency-field">
+                    <input type="tel" id="f-emergency" placeholder="Enter trusted mobile number" inputmode="numeric" autocomplete="tel" aria-describedby="emergency-hint">
+                    <i class="ph ph-shield-check vi" style="color:var(--primary,#00D4FF);opacity:0.7;" aria-hidden="true"></i>
+                </div>
+                <span class="field-hint" id="emergency-hint">Used only during critical emotional distress detection.</span>
+            </div>
+
+            <!-- ── SECURITY NOTICE ── -->
+            <p class="security-notice"><i class="ph ph-lock-key"></i> Your voice data and emergency contact are encrypted and used only for safety purposes.</p>
+
             <div class="pref-panel">
                 <div class="pref-row">
                     <label><i class="ph ph-translate"></i> Language</label>
