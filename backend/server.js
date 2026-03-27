@@ -89,9 +89,18 @@ app.get('/api/dashboard/:userId', async (req, res) => {
     res.json({ success: true, moods, chats, emotions });
 });
 
-// Serve Frontend Files Structurally
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../frontend/index.html')));
+// Serve Frontend Files — disable caching for JS/CSS so code changes reload instantly
+app.use(express.static(path.join(__dirname, '../frontend'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+            res.setHeader('Cache-Control', 'no-store');
+        }
+    }
+}));
+app.get('/', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

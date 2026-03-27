@@ -8,11 +8,13 @@
 async function saveMood() {
   if (!state.selectedMood) { toast('Please select a mood first', 'warning'); return; }
   const note = document.getElementById('mood-note').value.trim();
+  const uid = state.user?.user_id || state.user?.id;
+  if (!uid) { toast('Please log in to save mood', 'warning'); return; }
   try {
     const res = await fetch(`${API}/mood`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
-      body: JSON.stringify({ userId: state.user?.id || state.user?.user_id, mood: state.selectedMood, note })
+      body: JSON.stringify({ userId: uid, mood: state.selectedMood, note })
     });
     const data = await res.json();
     if (data.success) {
@@ -21,12 +23,15 @@ async function saveMood() {
       document.getElementById('mood-note').value = '';
       document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
       state.selectedMood = null;
+    } else {
+      toast(data.error || 'Could not save mood', 'error');
     }
   } catch(e) { toast('Could not save mood', 'error'); }
 }
 
 function appendMoodEntry(entry) {
   const list = document.getElementById('mood-history-list');
+  if (!list) return;
   list.querySelector('.mood-empty-state')?.remove();
   const em = EMOTION_MAP[entry.mood] || EMOTION_MAP.neutral;
   const li = document.createElement('li');
@@ -44,16 +49,73 @@ function appendMoodEntry(entry) {
 }
 
 // ──────────────────────────────────────────────
-// DASHBOARD
+// DASHBOARD — event bridge to React component
 // ──────────────────────────────────────────────
 async function fetchDashboard() {
-  showEl('dashboard-skeleton'); showEl('chart-skeleton');
-  hideEl('dashboard-stats');    hideEl('dashboard-charts');
+  // The React component (dashboard.js) handles full rendering.
+  // We dispatch a custom event so it re-fetches for the current user.
+  const uid = state.user?.user_id || localStorage.getItem('empathai_user_id');
+  window.dispatchEvent(new CustomEvent('empathai:dashboard:refresh', { detail: { userId: uid } }));
+}
+
+// ──────────────────────────────────────────────
+// COUNSELOR PORTAL
+// ──────────────────────────────────────────────
+async function fetchCounselor() {
   try {
-    const res = await fetch(`${API}/dashboard/${state.user?.user_id}`);
+    const res = await fetch(`${API}/counselor`, {
+      headers: { 'Authorization': `Bearer ${state.token}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    // Stats
-    document.getElementById('stat-conversations').textContent = data.totalConversations ?? 0;
-    const histories = data.moodHistory || [];
-    document.getElementById('stat-mood-entries').textContent = histories.length;
-    let dominant = 'None'; let max = 0;
+
+    // ── Crisis Alerts table ──
+    const alertBody = document.getElementById('crisis-table-body');
+    const alertCount = document.getElementById('alert-count');
+    const alerts = data.alerts || [];
+    if (alertCount) alertCount.textContent = `${alerts.length} alert${alerts.length !== 1 ? 's' : ''}`;
+    if (alertBody) {
+      if (alerts.length === 0) {
+        alertBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1.5rem">No crisis alerts recorded yet.</td></tr>`;
+      } else {
+        alertBody.innerHTML = alerts.map(a => `
+          <tr>
+            <td>${new Date(a.timestamp || Date.now()).toLocaleString()}</td>
+            <td>${escHtml(a.user_id || '—')}</td>
+            <td>${escHtml(a.message || '—')}</td>
+            <td><span class="badge-pill danger">High Risk</span></td>
+            <td><button class="btn-ghost" style="font-size:.8rem;padding:.25rem .6rem">Review</button></td>
+          </tr>`).join('');
+      }
+    }
+
+    // ── Registered Users table ──
+    const usersBody = document.getElementById('users-table-body');
+    const userCount = document.getElementById('user-count');
+    const users = (data.users || []).filter(u => u.login_type !== 'anonymous');
+    if (userCount) userCount.textContent = `${users.length} user${users.length !== 1 ? 's' : ''}`;
+    if (usersBody) {
+      if (users.length === 0) {
+        usersBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1.5rem">No registered users yet.</td></tr>`;
+      } else {
+        usersBody.innerHTML = users.map(u => {
+          const riskAlerts = alerts.filter(a => a.user_id === u.user_id);
+          const risk = riskAlerts.length > 0 ? 'High' : 'Low';
+          const riskCls = risk === 'High' ? 'danger' : 'success';
+          return `<tr>
+            <td>${escHtml(u.user_id || '—')}</td>
+            <td>${escHtml(u.name || '—')}</td>
+            <td>${escHtml(u.email || '—')}</td>
+            <td>${escHtml(u.login_type || '—')}</td>
+            <td><span class="badge-pill ${riskCls}">${risk}</span></td>
+          </tr>`;
+        }).join('');
+      }
+    }
+
+    toast('Counselor data loaded', 'success');
+  } catch (err) {
+    console.error('fetchCounselor error:', err);
+    toast('Could not load counselor data', 'error');
+  }
+}

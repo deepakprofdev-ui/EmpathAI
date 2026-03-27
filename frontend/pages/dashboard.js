@@ -79,9 +79,9 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = async (overrideUserId) => {
       try {
-        let userId = localStorage.getItem('empathai_user_id');
+        let userId = overrideUserId || localStorage.getItem('empathai_user_id');
         
         // Ensure graceful session recovery
         if (!userId) {
@@ -100,6 +100,9 @@ export default function Dashboard() {
           setLoading(false);
           return;
         }
+
+        setLoading(true);
+        setError(null);
 
         const API = window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
         const res = await fetch(`${API}/dashboard/${userId}`);
@@ -167,7 +170,7 @@ export default function Dashboard() {
           const computed = computeAnalytics({
             moods:         finalMoods,
             emotions:      emotionsAsArray,
-            exercises:     [{ completed: true }, { completed: true }, {}, {}, {}], // 2/5 done
+            exercises:     [{ completed: true }, { completed: true }, {}, {}, {}],
             conversations: finalChats,
           });
           setAnalytics(computed);
@@ -181,8 +184,17 @@ export default function Dashboard() {
       }
     };
 
+    // Initial fetch on mount
     fetchDashboardData();
+
+    // Re-fetch when user navigates to dashboard after login
+    const handleRefresh = (e) => {
+      fetchDashboardData(e.detail?.userId);
+    };
+    window.addEventListener('empathai:dashboard:refresh', handleRefresh);
+    return () => window.removeEventListener('empathai:dashboard:refresh', handleRefresh);
   }, []);
+
 
   // --- Calculations ---
   // --- Calculations ---

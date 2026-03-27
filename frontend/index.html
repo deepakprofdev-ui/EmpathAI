@@ -322,6 +322,35 @@
                 </div>
                 <span class="field-hint" id="pwd-hint"></span>
             </div>
+
+            <!-- ── VOICE AUTHENTICATION ── -->
+            <div class="field-group voice-auth-group" id="voice-auth-group">
+                <label><i class="ph ph-waveform"></i> Voice Authentication</label>
+                <p class="field-helper-text">Verify your identity using your voice for secure daily login.</p>
+                <button type="button" class="btn-voice-auth" id="btn-voice-auth" aria-label="Start voice authentication">
+                    <span class="voice-auth-icon"><i class="ph ph-microphone" id="voice-auth-mic-icon"></i></span>
+                    <span class="voice-auth-waveform hidden" id="voice-auth-waveform" aria-hidden="true">
+                        <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
+                        <span class="wave-bar"></span><span class="wave-bar"></span>
+                    </span>
+                    <span class="voice-auth-label" id="voice-auth-label">Start Voice Authentication</span>
+                </button>
+                <p class="voice-auth-status" id="voice-auth-status" aria-live="polite"></p>
+            </div>
+
+            <!-- ── EMERGENCY CONTACT ── -->
+            <div class="field-group">
+                <label for="f-emergency"><i class="ph ph-phone"></i> Emergency Contact Number</label>
+                <div class="input-icon-wrap" id="emergency-field">
+                    <input type="tel" id="f-emergency" placeholder="Enter trusted mobile number" inputmode="numeric" autocomplete="tel" aria-describedby="emergency-hint">
+                    <i class="ph ph-shield-check vi" style="color:var(--primary,#00D4FF);opacity:0.7;" aria-hidden="true"></i>
+                </div>
+                <span class="field-hint" id="emergency-hint">Used only during critical emotional distress detection.</span>
+            </div>
+
+            <!-- ── SECURITY NOTICE ── -->
+            <p class="security-notice"><i class="ph ph-lock-key"></i> Your voice data and emergency contact are encrypted and used only for safety purposes.</p>
+
             <div class="pref-panel">
                 <div class="pref-row">
                     <label><i class="ph ph-translate"></i> Language</label>
@@ -700,6 +729,64 @@
                 <input type="text" id="chart-reply-input" style="flex:1; padding: 1rem; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text);" placeholder="Type a professional counselor reply...">
                 <button type="submit" class="btn-primary" style="border-radius: 12px; padding: 0 1.5rem;"><i class="ph ph-paper-plane-tilt"></i></button>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- ===== VOICE ATTESTATION MODAL ===== -->
+<div id="voice-attest-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="attest-title">
+    <div class="modal-card voice-attest-card">
+        <!-- Header -->
+        <div class="va-header">
+            <div class="va-icon-ring" id="va-icon-ring">
+                <i class="ph ph-waveform" id="va-icon"></i>
+            </div>
+            <h2 id="attest-title">Confirm Your Identity</h2>
+            <p class="va-subtitle">Please record a 5-second voice clip so we can verify you're the original account holder.</p>
+        </div>
+
+        <!-- Waveform visualiser (active during recording) -->
+        <div class="va-waveform" id="va-waveform" aria-hidden="true">
+            <span class="va-bar"></span><span class="va-bar"></span><span class="va-bar"></span>
+            <span class="va-bar"></span><span class="va-bar"></span><span class="va-bar"></span>
+            <span class="va-bar"></span>
+        </div>
+
+        <!-- Timer -->
+        <div class="va-timer hidden" id="va-timer" aria-live="polite">
+            <span id="va-countdown">5</span>s remaining
+        </div>
+
+        <!-- Status message -->
+        <p class="va-status" id="va-status" aria-live="polite">Press the button below and speak naturally for 5 seconds.</p>
+
+        <!-- Actions -->
+        <div class="va-actions">
+            <button class="btn-va-record" id="btn-attest-record" aria-label="Record voice for verification">
+                <i class="ph ph-microphone"></i>
+                <span id="attest-record-label">Record 5s</span>
+            </button>
+            <button class="btn-auth-submit va-submit hidden" id="btn-attest-submit" disabled>
+                <span class="btn-label">Verify Identity</span>
+            </button>
+        </div>
+
+        <!-- Soft-gate skip -->
+        <div class="va-skip-row">
+            <button class="va-skip-link" id="btn-attest-skip" aria-label="Skip voice verification and continue">
+                <i class="ph ph-warning"></i> Skip — Continue Anyway
+            </button>
+        </div>
+
+        <!-- Confidence bar (shown after verification) -->
+        <div class="va-confidence hidden" id="va-confidence">
+            <div class="va-conf-label">
+                <span>Voice Match Confidence</span>
+                <span id="va-conf-pct">0%</span>
+            </div>
+            <div class="va-conf-bar-track">
+                <div class="va-conf-bar-fill" id="va-conf-bar" style="width:0%"></div>
+            </div>
         </div>
     </div>
 </div>

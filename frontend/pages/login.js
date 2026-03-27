@@ -219,7 +219,15 @@ async function doLogin(endpoint, payload) {
       localStorage.setItem('empathai_user_id', data.user.user_id);
     }
     hideAuth();
-    launchApp();
+
+    // ── VOICE ATTESTATION GATE ────────────────────────────────────
+    // Only for email-registered users who have a stored voice baseline.
+    // Anonymous, counselor, and no-sample users go straight to the app.
+    if (data.user && data.user.login_type === 'email' && data.user.has_voice_sample) {
+      showVoiceAttest();
+    } else {
+      launchApp();
+    }
   } catch (err) {
     toast('Cannot connect to server', 'error');
   } finally { setAuthLoading(false); }
@@ -277,6 +285,150 @@ window.handleGoogleLogin = (e) => {
 };
 
 
+
+// ──────────────────────────────────────────────
+// VOICE ATTESTATION  (post-login identity check)
+// ──────────────────────────────────────────────
+let attestRecorder = null;
+let attestChunks   = [];
+let attestCountdownInterval = null;
+
+function showVoiceAttest() {
+  const modal = document.getElementById('voice-attest-modal');
+  if (!modal) { launchApp(); return; } // safety fallback
+  modal.classList.remove('hidden');
+
+  // Reset UI to initial state
+  _vaSetStatus('Press the button below and speak naturally for 5 seconds.', '');
+  const recordBtn = document.getElementById('btn-attest-record');
+  const submitBtn = document.getElementById('btn-attest-submit');
+  const timerEl   = document.getElementById('va-timer');
+  const confEl    = document.getElementById('va-confidence');
+  const waveEl    = document.getElementById('va-waveform');
+  const ringEl    = document.getElementById('va-icon-ring');
+
+  if (recordBtn)  { recordBtn.disabled = false; document.getElementById('attest-record-label').textContent = 'Record 5s'; recordBtn.classList.remove('recording'); }
+  if (submitBtn)  { submitBtn.classList.add('hidden'); submitBtn.disabled = true; }
+  if (timerEl)    { timerEl.classList.add('hidden'); }
+  if (confEl)     { confEl.classList.add('hidden'); }
+  if (waveEl)     { waveEl.classList.remove('active'); }
+  if (ringEl)     { ringEl.classList.remove('recording'); }
+  state.attestSample = null;
+
+  // Wire buttons (once per show using one-shot flag)
+  document.getElementById('btn-attest-record')?.addEventListener('click', recordAttestSample, { once: false });
+  document.getElementById('btn-attest-submit')?.addEventListener('click', submitAttestation,  { once: false });
+  document.getElementById('btn-attest-skip')?.addEventListener('click', () => {
+    toast('Session started (voice unverified)', 'warning');
+    document.getElementById('voice-attest-modal').classList.add('hidden');
+    launchApp();
+  }, { once: false });
+}
+
+async function recordAttestSample() {
+  if (attestRecorder && attestRecorder.state === 'recording') return;
+  const recordBtn = document.getElementById('btn-attest-record');
+  const submitBtn = document.getElementById('btn-attest-submit');
+  const timerEl   = document.getElementById('va-timer');
+  const countEl   = document.getElementById('va-countdown');
+  const waveEl    = document.getElementById('va-waveform');
+  const ringEl    = document.getElementById('va-icon-ring');
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    attestRecorder = new MediaRecorder(stream);
+    attestChunks   = [];
+
+    attestRecorder.ondataavailable = e => { if (e.data.size > 0) attestChunks.push(e.data); };
+    attestRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob   = new Blob(attestChunks, { type: 'audio/webm' });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        state.attestSample = reader.result;
+        _vaSetStatus('Recording saved ✓ — click Verify Identity when ready.', 'success');
+        if (recordBtn) { recordBtn.disabled = false; document.getElementById('attest-record-label').textContent = 'Retake'; recordBtn.classList.remove('recording'); }
+        if (submitBtn) { submitBtn.classList.remove('hidden'); submitBtn.disabled = false; }
+        if (waveEl)    { waveEl.classList.remove('active'); }
+        if (ringEl)    { ringEl.classList.remove('recording'); }
+        if (timerEl)   { timerEl.classList.add('hidden'); }
+      };
+    };
+
+    // Start recording
+    attestRecorder.start();
+    _vaSetStatus('Recording… speak naturally 🎙️', '');
+    if (recordBtn) { recordBtn.disabled = true; recordBtn.classList.add('recording'); document.getElementById('attest-record-label').textContent = 'Recording…'; }
+    if (waveEl)    { waveEl.classList.add('active'); }
+    if (ringEl)    { ringEl.classList.add('recording'); }
+    if (timerEl)   { timerEl.classList.remove('hidden'); }
+
+    // Countdown
+    let remaining = 5;
+    if (countEl) countEl.textContent = remaining;
+    clearInterval(attestCountdownInterval);
+    attestCountdownInterval = setInterval(() => {
+      remaining--;
+      if (countEl) countEl.textContent = remaining;
+      if (remaining <= 0) {
+        clearInterval(attestCountdownInterval);
+        if (attestRecorder.state === 'recording') attestRecorder.stop();
+      }
+    }, 1000);
+
+  } catch (err) {
+    _vaSetStatus('Microphone access denied. Please allow mic and try again.', 'error');
+  }
+}
+
+async function submitAttestation() {
+  if (!state.attestSample) { _vaSetStatus('Please record a voice sample first.', 'error'); return; }
+  const submitBtn = document.getElementById('btn-attest-submit');
+  if (submitBtn) { submitBtn.disabled = true; }
+  _vaSetStatus('Analysing voice pattern…', '');
+
+  try {
+    const res = await fetch(`${API}/auth/verify-voice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+      body: JSON.stringify({ user_id: state.user.user_id, voice_sample: state.attestSample })
+    });
+    const data = await res.json();
+
+    // Show confidence bar
+    const confEl    = document.getElementById('va-confidence');
+    const confBar   = document.getElementById('va-conf-bar');
+    const confPct   = document.getElementById('va-conf-pct');
+    const pct = data.confidence !== undefined ? Math.max(0, Math.min(100, data.confidence)) : 0;
+    if (confEl)  { confEl.classList.remove('hidden'); }
+    if (confBar) { setTimeout(() => { confBar.style.width = pct + '%'; }, 80); }
+    if (confPct) { confPct.textContent = pct + '%'; }
+
+    if (data.match) {
+      _vaSetStatus(data.message || 'Voice pattern confirmed ✓', 'success');
+      toast('Identity verified ✓', 'success');
+      setTimeout(() => {
+        document.getElementById('voice-attest-modal').classList.add('hidden');
+        launchApp();
+      }, 1200);
+    } else {
+      _vaSetStatus(data.message || 'Voice did not match. Try again or skip.', 'error');
+      toast('Voice mismatch — try again or skip', 'warning');
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  } catch (err) {
+    _vaSetStatus('Server error during verification. You may skip and continue.', 'error');
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+function _vaSetStatus(msg, cls) {
+  const el = document.getElementById('va-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'va-status' + (cls ? ' ' + cls : '');
+}
 
 // ──────────────────────────────────────────────
 // LAUNCH APP
