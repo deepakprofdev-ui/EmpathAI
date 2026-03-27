@@ -24,6 +24,52 @@
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* --- Humanization & UX Animations --- */
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .message {
+            animation: messageIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInView {
+            from { opacity: 0; transform: scale(0.99); visibility: hidden; }
+            to { opacity: 1; transform: scale(1); visibility: visible; }
+        }
+        .view-section:not(.hidden) {
+            animation: fadeInView 0.3s ease-out forwards;
+        }
+
+        .chat-input-area:focus-within {
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.15) !important;
+            border-color: rgba(0, 212, 255, 0.4) !important;
+        }
+
+        .btn-humanize {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 50px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-humanize:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.2);
+        }
+        .btn-humanize i { font-size: 1rem; }
+    </style>
 </head>
 <body>
 
@@ -303,6 +349,13 @@
                     <span id="voice-status-text" style="font-size: 0.85rem; color: #666; font-weight: 500;">No sample</span>
                 </div>
             </div>
+            <div class="field-group" id="deaf-group">
+                <label class="toggle-switch-row" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="f-is-deaf" style="width: 18px; height: 18px; cursor: pointer;">
+                    <span style="font-size: 0.9rem; font-weight: 500;"><i class="ph ph-ear-slash"></i> Physically Challenged (Deaf)</span>
+                </label>
+                <p class="field-helper-text" style="margin-top: 4px; font-size: 0.75rem;">Enabling this allows you to skip voice authentication steps.</p>
+            </div>
             <div class="field-group">
                 <label for="f-email"><i class="ph ph-envelope"></i> Email address</label>
                 <div class="input-icon-wrap" id="email-field">
@@ -371,6 +424,9 @@
             <button type="submit" class="btn-auth-submit" id="btn-auth-submit">
                 <span class="btn-label">Sign in securely</span>
             </button>
+            <div id="login-timer-container" class="hidden" style="margin-top: 1rem; text-align: center; color: var(--danger, #EF4444); font-weight: 600;">
+                <i class="ph ph-clock"></i> <span id="login-timer-text">Try again in 10s</span>
+            </div>
         </form>
 
         <div class="auth-toggle-row">
@@ -497,6 +553,11 @@
                 </div>
 
                 <!-- Input bar -->
+                <div style="padding: 0 20px;">
+                    <button class="btn-humanize" onclick="triggerHumanize()">
+                        <i class="ph ph-heart-straight-fill"></i> Humanize Conversation
+                    </button>
+                </div>
                 <div class="chat-input-bar">
                     <form class="chat-form" id="chat-form">
                         <button type="button" class="btn-mic" id="btn-mic" aria-label="Voice input" aria-pressed="false">

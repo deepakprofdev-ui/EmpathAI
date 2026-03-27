@@ -23,7 +23,11 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user.user_id, role: user.login_type }, JWT_SECRET, { expiresIn: '24h' });
-    res.json({ success: true, token, user: { user_id: user.user_id, email: user.email, name: user.name, login_type: user.login_type, has_voice_sample: !!(user.voice_sample) }});
+    
+    // Update last login
+    user.last_login = Date.now();
+
+    res.json({ success: true, token, user: { user_id: user.user_id, email: user.email, name: user.name, login_type: user.login_type, has_voice_sample: !!(user.voice_sample), is_deaf: !!(user.is_deaf) }});
 });
 
 router.post('/register', async (req, res) => {
@@ -41,7 +45,9 @@ router.post('/register', async (req, res) => {
         password_hash: hash,
         login_type: 'email',
         voice_sample: voice_sample || null,
-        created_at: Date.now()
+        created_at: Date.now(),
+        last_login: Date.now(),
+        is_deaf: req.body.is_deaf === true
     };
     db.users.push(newUser);
     const token = jwt.sign({ id: newUser.user_id, role: newUser.login_type }, JWT_SECRET, { expiresIn: '24h' });

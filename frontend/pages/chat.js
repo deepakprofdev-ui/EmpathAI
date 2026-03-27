@@ -232,11 +232,9 @@ setInterval(async () => {
   } catch(e) { /* ignore polling errors */ }
 }, 10000);
 
-// --- GLOBAL EXPORTS ---
-window.launchApp = launchApp;
-window.setupApp = setupApp;
-window.switchView = switchView;
-window.sendChatMessage = sendChatMessage;
+// ──────────────────────────────────────────────
+// UI HELPERS
+// ──────────────────────────────────────────────
 
 function addMessage(text, role, emotion = null) {
   const container = document.getElementById('chat-messages');
@@ -293,6 +291,14 @@ async function markHighRisk(message) {
 
 function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+function triggerHumanize() {
+  const input = document.getElementById('chat-input');
+  if (input) {
+    input.value = '/humanize';
+    handleChatSubmit();
+  }
+}
+
 // ──────────────────────────────────────────────
 // VOICE INPUT
 // ──────────────────────────────────────────────
@@ -324,3 +330,13 @@ function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
   window.speechSynthesis.speak(utterance);
 }
+
+// ──────────────────────────────────────────────
+// EXPORTS
+// ──────────────────────────────────────────────
+window.launchApp = launchApp;
+window.setupApp = setupApp;
+window.switchView = switchView;
+window.sendChatMessage = sendChatMessage;
+window.addMessage = addMessage;
+window.triggerHumanize = triggerHumanize;

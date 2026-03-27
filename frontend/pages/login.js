@@ -113,6 +113,8 @@ function showAuth(mode = 'login') {
   document.getElementById('name-group').style.display = mode === 'register' ? '' : 'none';
   const voiceGroup = document.getElementById('voice-sample-group');
   if (voiceGroup) voiceGroup.style.display = mode === 'register' ? '' : 'none';
+  const deafGroup = document.getElementById('deaf-group');
+  if (deafGroup) deafGroup.style.display = mode === 'register' ? '' : 'none';
   document.getElementById('btn-toggle-auth').textContent = mode === 'register' ? 'Already have an account? Sign in' : 'Need an account? Sign up';
 }
 function hideAuth() { document.getElementById('auth-modal').classList.add('hidden'); }
@@ -198,8 +200,9 @@ async function handleEmailAuth() {
   const ep = state.mode === 'register' ? '/auth/register' : '/auth/login';
   
   const payload = { email, password, name };
-  if (state.mode === 'register' && state.voiceSample) {
-    payload.voice_sample = state.voiceSample;
+  if (state.mode === 'register') {
+    if (state.voiceSample) payload.voice_sample = state.voiceSample;
+    payload.is_deaf = document.getElementById('f-is-deaf')?.checked || false;
   }
   
   await doLogin(ep, payload);
@@ -222,7 +225,8 @@ async function doLogin(endpoint, payload) {
 
     // ── VOICE ATTESTATION GATE ────────────────────────────────────
     // Only for email-registered users who have a stored voice baseline.
-    // Anonymous, counselor, and no-sample users go straight to the app.
+    // Deaf users can skip, but the popup still shows for them to choose.
+    // Anonymous, counselor go straight.
     if (data.user && data.user.login_type === 'email' && data.user.has_voice_sample) {
       showVoiceAttest();
     } else {
@@ -318,8 +322,16 @@ function showVoiceAttest() {
   // Wire buttons (once per show using one-shot flag)
   document.getElementById('btn-attest-record')?.addEventListener('click', recordAttestSample, { once: false });
   document.getElementById('btn-attest-submit')?.addEventListener('click', submitAttestation,  { once: false });
-  document.getElementById('btn-attest-skip')?.addEventListener('click', () => {
-    toast('Session started (voice unverified)', 'warning');
+  
+  const skipBtn = document.getElementById('btn-attest-skip');
+  if (state.user?.is_deaf) {
+    if (skipBtn) skipBtn.style.display = 'flex';
+  } else {
+    if (skipBtn) skipBtn.style.display = 'none'; // Lock access for non-deaf users
+  }
+
+  skipBtn?.addEventListener('click', () => {
+    toast('Session started', 'success');
     document.getElementById('voice-attest-modal').classList.add('hidden');
     launchApp();
   }, { once: false });
@@ -406,16 +418,23 @@ async function submitAttestation() {
     if (confPct) { confPct.textContent = pct + '%'; }
 
     if (data.match) {
-      _vaSetStatus(data.message || 'Voice pattern confirmed ✓', 'success');
+      _vaSetStatus('Successfully Verified ✓', 'success');
       toast('Identity verified ✓', 'success');
       setTimeout(() => {
         document.getElementById('voice-attest-modal').classList.add('hidden');
         launchApp();
-      }, 1200);
+      }, 1500);
     } else {
-      _vaSetStatus(data.message || 'Voice did not match. Try again or skip.', 'error');
-      toast('Voice mismatch — try again or skip', 'warning');
-      if (submitBtn) submitBtn.disabled = false;
+      _vaSetStatus('Access Denied ❌', 'error');
+      toast('Voice mismatch — Access Denied', 'error');
+      
+      // Auto-logout and redirect after 2s
+      setTimeout(() => {
+        document.getElementById('voice-attest-modal').classList.add('hidden');
+        doLogout();
+        showAuth('login');
+        startLoginTimer(10);
+      }, 2000);
     }
   } catch (err) {
     _vaSetStatus('Server error during verification. You may skip and continue.', 'error');
@@ -459,6 +478,29 @@ function toast(msg, type = 'info') {
 // ──────────────────────────────────────────────
 function showEl(id) { document.getElementById(id)?.classList.remove('hidden'); }
 function hideEl(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+function startLoginTimer(seconds) {
+  const btn = document.getElementById('btn-auth-submit');
+  const container = document.getElementById('login-timer-container');
+  const text = document.getElementById('login-timer-text');
+  if (!btn || !container || !text) return;
+
+  btn.disabled = true;
+  container.classList.remove('hidden');
+  
+  let remaining = seconds;
+  text.textContent = `Try again in ${remaining}s`;
+  
+  const interval = setInterval(() => {
+    remaining--;
+    text.textContent = `Try again in ${remaining}s`;
+    if (remaining <= 0) {
+      clearInterval(interval);
+      btn.disabled = false;
+      container.classList.add('hidden');
+    }
+  }, 1000);
+}
 // --- GLOBAL EXPORTS ---
 window.showAuth = showAuth;
 window.hideModal = hideModal;
